@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Validator, ValidationBuilder, required } from "./validators";
+import { Validator, ValidationBuilder, required } from './validators';
 
 export interface makerOf<T> {
   new (...args): T;
@@ -13,58 +13,59 @@ interface keyType {
 }
 
 class Custom {
-  constructor(public cb: (data, parent) => any) {}
+  constructor (public cb: (data, parent) => any) {
+  }
 }
 
-function setKeyType(target, key, type, isArray = false, isProperty = false) {
+function setKeyType (target, key, type, isArray = false, isProperty = false) {
   const keyTypes: keyType[] =
-    (Reflect as any).getMetadata("model:keyTypes", target.constructor) || [];
+    (Reflect as any).getMetadata('model:keyTypes', target.constructor) || [];
   keyTypes.push({ key, type, isArray, isProperty });
-  (Reflect as any).defineMetadata("model:keyTypes", keyTypes, target.constructor);
+  (Reflect as any).defineMetadata('model:keyTypes', keyTypes, target.constructor);
 }
 
 const typeUndefinedErrorMessage =
-  "passed in type is undefined. is it defined above the calling class?";
+  'passed in type is undefined. is it defined above the calling class?';
 
-export function fromClass(target, key, descriptor?) {
-  const classType = (Reflect as any).getMetadata("design:type", target, key);
+export function fromClass (target, key, descriptor?) {
+  const classType = (Reflect as any).getMetadata('design:type', target, key);
   if (classType === undefined) {
-    console.error("fromClass", typeUndefinedErrorMessage);
+    console.error('fromClass', typeUndefinedErrorMessage);
     return;
   }
 
   setKeyType(target, key, classType);
 }
 
-export function fromClassArray(arrayType) {
+export function fromClassArray (arrayType) {
   if (arrayType === undefined) {
-    console.error("fromClassArray", typeUndefinedErrorMessage);
+    console.error('fromClassArray', typeUndefinedErrorMessage);
     return;
   }
 
-  return function(target, key, descriptor?) {
+  return function (target, key, descriptor?) {
     setKeyType(target, key, arrayType, true);
   };
 }
 
-export function fromPropertyClass(propertyClass) {
+export function fromPropertyClass (propertyClass) {
   if (propertyClass === undefined) {
-    console.error("fromPropertyClass", typeUndefinedErrorMessage);
+    console.error('fromPropertyClass', typeUndefinedErrorMessage);
     return;
   }
 
-  return function(target, key, descriptor?) {
+  return function (target, key, descriptor?) {
     setKeyType(target, key, propertyClass, false, true);
   };
 }
 
-export function fromCustom(customFunction: (data, parent) => any) {
-  return function(target, key, descriptor?) {
+export function fromCustom (customFunction: (data, parent) => any) {
+  return function (target, key, descriptor?) {
     setKeyType(target, key, new Custom(customFunction));
   };
 }
 
-export function createFromProperties<T>(
+export function createFromProperties<T> (
   cl: makerOf<T>,
   data: any,
 ): { [key: string]: T } {
@@ -75,17 +76,17 @@ export function createFromProperties<T>(
   return instance;
 }
 
-export function createFromArray<T>(cl: makerOf<T>, data: any[]): T[] {
+export function createFromArray<T> (cl: makerOf<T>, data: any[]): T[] {
   return data.map(d => createFrom(cl, d));
 }
 
-export function createFrom<T>(cl: makerOf<T>, data: any, parent = null): T {
+export function createFrom<T> (cl: makerOf<T>, data: any, parent = null): T {
   if (cl instanceof Custom) return (cl as any).cb(data, parent);
 
   const instance = new (Function.prototype.bind.apply(cl, []))();
   Object.assign(instance, data);
 
-  const keyTypes: keyType[] = (Reflect as any).getMetadata("model:keyTypes", cl);
+  const keyTypes: keyType[] = (Reflect as any).getMetadata('model:keyTypes', cl);
   if (keyTypes) {
     keyTypes.forEach(kt => {
       if (data == null) return;
@@ -137,8 +138,8 @@ export interface Field {
   formCreator: Function;
 }
 
-export function field(friendly: string, ...validators: Validator[]) {
-  return function(target, key) {
+export function field (friendly: string, ...validators: Validator[]) {
+  return function (target, key) {
     const fields: Field[] = getFields(target);
     fields.push({
       friendly,
@@ -147,12 +148,12 @@ export function field(friendly: string, ...validators: Validator[]) {
       fieldType: FieldType.Field,
       formCreator: null,
     });
-    (Reflect as any).defineMetadata("model:fields", fields, target.constructor);
+    (Reflect as any).defineMetadata('model:fields', fields, target.constructor);
   };
 }
 
-export function getFields(target): Field[] {
-  return (Reflect as any).getMetadata("model:fields", target.constructor) || [];
+export function getFields (target): Field[] {
+  return (Reflect as any).getMetadata('model:fields', target.constructor) || [];
 }
 
 export interface ValidationResult {
@@ -160,7 +161,7 @@ export interface ValidationResult {
   message: string;
 }
 
-export function validateModel(
+export function validateModel (
   model: any,
   fields: Field[],
   settings?: any,
@@ -202,22 +203,23 @@ export class Form {
   public isInvalid: boolean = false;
 
   protected _fields: Field[] = [];
-  constructor(data = null, fields: Field[] = null) {
+
+  constructor (data = null, fields: Field[] = null) {
     if (data) Object.assign(this, data);
 
     if (fields == null) this._fields = getFields(this);
     else this._fields = fields;
 
-    this._fields.forEach(f => (this.validation[f.key] = ""));
+    this._fields.forEach(f => (this.validation[f.key] = ''));
   }
 
-  public getFieldName(field: string) {
+  public getFieldName (field: string) {
     const f = this._fields.find(ff => ff.key == field);
     return f ? f.friendly : field;
   }
 
   // returns true if valid
-  public validate(settings?: any) {
+  public validate (settings?: any) {
     this.clearValidation();
 
     const results = validateModel(this, this._fields, settings);
@@ -230,7 +232,7 @@ export class Form {
     }
 
     const onValidator = (this as any).onValidate;
-    if (onValidator && typeof onValidator == "function") {
+    if (onValidator && typeof onValidator == 'function') {
       const adder = (messageOrField: string, message?: string) => {
         if (message != undefined) {
           this.validation[messageOrField] = message;
@@ -246,21 +248,21 @@ export class Form {
 
     if (shouldThrow) {
       this.isInvalid = true;
-      throw new Error("Not Valid");
+      throw new Error('Not Valid');
     }
   }
 
-  public clearValidation() {
+  public clearValidation () {
     this.isInvalid = false;
 
     for (let k in this.validation) {
-      this.validation[k] = "";
+      this.validation[k] = '';
     }
 
     this.validationMessages = [];
   }
 
-  protected copyFields(src) {
+  protected copyFields (src) {
     if (src == null) return;
     this._fields.forEach(f => {
       this[f.key] = src[f.key] != null ? src[f.key] : this[f.key];
@@ -268,32 +270,32 @@ export class Form {
   }
 }
 
-export function cloneOf<T>(modelType: makerOf<T>, instance: T): T {
+export function cloneOf<T> (modelType: makerOf<T>, instance: T): T {
   const clonedJson = JSON.parse(JSON.stringify(instance));
   return createFrom(modelType, clonedJson);
 }
 
 // this may need to be hardened for minification... we'll see
-const getFieldNameRegEx = new RegExp("(?:return|=>)([^;}]*)");
+const getFieldNameRegEx = new RegExp('(?:return|=>)([^;}]*)');
 
-export function nameOf<T>(expr: (T) => any): string {
+export function nameOf<T> (expr: (T) => any): string {
   const res = getFieldNameRegEx.exec(expr.toString());
-  if (res == null) throw new Error("Could not get field name");
+  if (res == null) throw new Error('Could not get field name');
 
   // this is limited to actual objects top level properties...
   // not sure if we will have a need to go deep??
   // i guess we will find out :)
-  return res[1].split(".")[1].trim();
+  return res[1].split('.')[1].trim();
 }
 
 export class ModeledFormSetup<T> {
   private _fields: Field[] = [];
 
-  requiredField(fs: (obj: T) => any, friendly: string, ...builders: ValidationBuilderArg<T>[]) {
+  requiredField (fs: (obj: T) => any, friendly: string, ...builders: ValidationBuilderArg<T>[]) {
     this.field(fs, friendly, b => b.use(required), ...builders);
   }
 
-  field(fs: (obj: T) => any, friendly: string, ...builders: ValidationBuilderArg<T>[]) {
+  field (fs: (obj: T) => any, friendly: string, ...builders: ValidationBuilderArg<T>[]) {
     this._fields.push({
       friendly,
       validators: [],
@@ -304,7 +306,7 @@ export class ModeledFormSetup<T> {
     });
   }
 
-  form<AnotherT>(
+  form<AnotherT> (
     fs: (obj: T) => AnotherT,
     friendly: string,
     formCreator: (thing: AnotherT) => FormForType<AnotherT>,
@@ -318,7 +320,7 @@ export class ModeledFormSetup<T> {
     });
   }
 
-  formArray<AnotherT>(
+  formArray<AnotherT> (
     fs: (obj: T) => AnotherT[],
     friendly: string,
     formCreator: (thing: AnotherT) => FormForType<AnotherT>,
@@ -332,7 +334,7 @@ export class ModeledFormSetup<T> {
     });
   }
 
-  formProperty<AnotherT>(
+  formProperty<AnotherT> (
     fs: (obj: T) => any,
     friendly: string,
     formCreator: (thing: AnotherT) => FormForType<AnotherT>,
@@ -346,12 +348,12 @@ export class ModeledFormSetup<T> {
     });
   }
 
-  getFields(): Field[] {
+  getFields (): Field[] {
     return this._fields;
   }
 }
 
-const applyModel = <ModelT>(
+const applyModel = <ModelT> (
   t: makerOf<ModelT>,
   applyTo: FormAsModel<ModelT>,
   newModel: ModelT,
@@ -396,7 +398,7 @@ const applyModel = <ModelT>(
 };
 
 export class FormAsModel<ModelT> extends Form {
-  constructor(
+  constructor (
     fields: Field[],
     private _t: makerOf<ModelT>,
     private _orig: ModelT,
@@ -404,7 +406,7 @@ export class FormAsModel<ModelT> extends Form {
     super(undefined, fields);
   }
 
-  applyModel(newModel: ModelT) {
+  applyModel (newModel: ModelT) {
     this.clearValidation();
 
     applyModel(this._t, this, newModel, this._fields);
@@ -413,7 +415,7 @@ export class FormAsModel<ModelT> extends Form {
   // formArray fields could be weird in this if the models arew out of sync..
   // if you do ever call this yourself, make sure
   // that items haven't been moved around
-  copyValidation(fasm: FormAsModel<ModelT>) {
+  copyValidation (fasm: FormAsModel<ModelT>) {
     if (fasm == null) return;
 
     this.validationMessages = fasm.validationMessages;
@@ -453,7 +455,7 @@ export class FormAsModel<ModelT> extends Form {
     });
   }
 
-  updatedModel(): ModelT {
+  updatedModel (): ModelT {
     const data = cloneOf(this._t, this._orig);
     this._fields.forEach(f => {
       data[f.key] = this[f.key];
@@ -488,16 +490,14 @@ export class FormAsModel<ModelT> extends Form {
       for (const key in this[f.key]) {
         if (this[f.key][key] == null) continue;
 
-        data[f.key][key] = (this[f.key][key] as FormAsModel<
-          any
-        >).updatedModel();
+        data[f.key][key] = (this[f.key][key] as FormAsModel<any>).updatedModel();
       }
     });
 
     return data;
   }
 
-  validate(settings?: any) {
+  validate (settings?: any) {
     let shouldThrow = false;
 
     try {
@@ -549,14 +549,14 @@ export class FormAsModel<ModelT> extends Form {
 
     if (shouldThrow) {
       this.isInvalid = true;
-      throw new Error("Not Valid");
+      throw new Error('Not Valid');
     }
   }
 }
 
 export type FormForType<ModelT> = FormAsModel<ModelT> & ModelT;
 
-export function formFor<ModelT>(
+export function formFor<ModelT> (
   t: makerOf<ModelT>,
   setup: (s: ModeledFormSetup<ModelT>) => void,
 ): (thing: ModelT) => FormForType<ModelT> {
@@ -587,17 +587,18 @@ export function formFor<ModelT>(
 class TheValidationBuilder<T> implements ValidationBuilder<T> {
   validators: Validator[] = [];
 
-  constructor(private value: any, private model: any, private settings: any, private fields: Field[]) {}
+  constructor (private value: any, private model: any, private settings: any, private fields: Field[]) {
+  }
 
-  use(...validators: Validator[]) {
+  use (...validators: Validator[]) {
     this.validators.push(...validators);
   }
 
-  if(fs: (obj: T) => boolean, ...validators: Validator<T>[]) {
+  if (fs: (obj: T) => boolean, ...validators: Validator<T>[]) {
     if (fs(this.model)) this.use(...validators);
   }
 
-  same(fs: (obj: T) => any, message?: string) {
+  same (fs: (obj: T) => any, message?: string) {
     const key = nameOf(fs);
     this.use((input, model) => {
       if (input === model[key]) return null;
@@ -608,11 +609,11 @@ class TheValidationBuilder<T> implements ValidationBuilder<T> {
     });
   }
 
-  matches(expr: RegExp, message: string) {
+  matches (expr: RegExp, message: string) {
     this.use(input => expr.test(input) ? null : message);
   }
 
-  validate() {
+  validate () {
     for (let i = 0; i < this.validators.length; i++) {
       const message = this.validators[i].apply(null, [this.value, this.model, this.settings]);
       if (message != null) {
@@ -624,4 +625,4 @@ class TheValidationBuilder<T> implements ValidationBuilder<T> {
   }
 }
 
-export * as Validators from "./validators";
+export * from './validators';
