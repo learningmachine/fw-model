@@ -14,7 +14,7 @@ const trimInput = input => {
   return input;
 };
 
-export const required = (input: string) => {
+const required = (input: string) => {
   if (input == null || input.length == 0) return "Required";
   const hasValue =
     input
@@ -25,27 +25,27 @@ export const required = (input: string) => {
 };
 
 const emailRegEx = /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@((?=[a-z0-9-]{1,63}\.)(xn--)?[a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,63}$/i;
-export const isEmail = (input: string) => {
+const isEmail = (input: string) => {
   if (input == null || input.length == 0) return null;
   input = trimInput(input);
   return emailRegEx.test(input) ? null : "Not a valid Email Address";
 };
 
-export const isNumber = (input: string) => {
+const isNumber = (input: string) => {
   if (input == null || input.length == 0) return null;
   input = trimInput(input);
   const isNumeric = !isNaN(<any>input - parseFloat(input));
   return isNumeric ? null : "Not a valid number";
 };
 
-export const isInteger = (input: string) => {
+const isInteger = (input: string) => {
   if (input == null || input.length == 0) return null;
   input = trimInput(input);
   const isInt = parseFloat(input) - parseInt(input) === 0;
   return isInt ? null : "Not a valid integer";
 };
 
-export const inRange = (min: number, max: number) => {
+const inRange = (min: number, max: number) => {
   return (input: string) => {
     if (input == null || input.length == 0) return null;
     input = trimInput(input);
@@ -84,7 +84,7 @@ const defaultUrlOptions: UrlOptions = {
   requireTld: false
 };
 
-export const isUrl = (options: UrlOptions = defaultUrlOptions) => {
+const isUrl = (options: UrlOptions = defaultUrlOptions) => {
   const opts = Object.assign({} as UrlOptions, defaultUrlOptions, options);
 
   // hostname regex
@@ -122,7 +122,7 @@ export const isUrl = (options: UrlOptions = defaultUrlOptions) => {
   if (opts.requireTld) {
     tldRegex = "(\\.[a-zA-Z]{2,6})";
   }
-  
+
   const s = "^" + protocolRegex + regExStr + tldRegex + portRegex + pathRegex + "$";
   const regEx = new RegExp(s);
 
@@ -133,7 +133,7 @@ export const isUrl = (options: UrlOptions = defaultUrlOptions) => {
   };
 };
 
-export const isMinLength = (num: number) => {
+const isMinLength = (num: number) => {
   return (input: string) => {
     if (input == null || input.length == 0) return null;
     input = trimInput(input);
@@ -143,12 +143,12 @@ export const isMinLength = (num: number) => {
   };
 };
 
-export const isChecked = (input: any) => {
+const isChecked = (input: any) => {
   if (input == null) return null;
   return input === true ? null : "Required";
 };
 
-export const doesNotContainCharacters = (charactersRegex: string) => {
+const doesNotContainCharacters = (charactersRegex: string) => {
   return (input: string) => {
     const globalRegex: RegExp = new RegExp(charactersRegex, 'g');
     return globalRegex.test(input) ? `The value cannot contain the character${charactersRegex.length > 1 ? 's' : ''} '${charactersRegex}'.` : null;
@@ -156,6 +156,19 @@ export const doesNotContainCharacters = (charactersRegex: string) => {
 };
 
 // wrap can take in simple validators and convert them to validation builder
-export const wrap = (...validators: Validator[]): (ValidationBuilder) => void => {
+const wrap = (...validators: Validator[]): (ValidationBuilder) => void => {
   return b => b.use(...validators);
 }
+
+export {
+  required,
+  isEmail,
+  isNumber,
+  isInteger,
+  inRange,
+  isUrl,
+  isMinLength,
+  isChecked,
+  doesNotContainCharacters,
+  wrap
+};
