@@ -5,10 +5,11 @@ import {
   FormForType, FormAsModel,
   fromClass,
   fromClassArray,
-  Validators,
   createFrom,
   fromPropertyClass,
 } from "../src/index";
+
+import * as Validators from '../src/validators';
 
 class ModelA {
   field1: string;
