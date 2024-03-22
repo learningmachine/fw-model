@@ -197,10 +197,17 @@ export function validateModel (
   return result;
 }
 
+export declare enum FormState {
+  INIT = "init",
+  SUBMITTED = "submitted",
+  SUBMITTING = "submitting"
+}
+
 export class Form {
   public validationMessages: string[] = [];
   public validation: { [key: string]: string } = {};
   public isInvalid: boolean = false;
+  public state: FormState = FormState.INIT;
 
   protected _fields: Field[] = [];
 
@@ -216,6 +223,10 @@ export class Form {
   public getFieldName (field: string) {
     const f = this._fields.find(ff => ff.key == field);
     return f ? f.friendly : field;
+  }
+
+  public setState (formState: FormState): void {
+    this.state = formState;
   }
 
   // returns true if valid
