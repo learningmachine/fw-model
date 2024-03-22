@@ -1,0 +1,40 @@
+{
+	"root": true,
+	"parser": "@typescript-eslint/parser",
+	"plugins": [
+		"@typescript-eslint"
+	],
+	"extends": [
+		"eslint:recommended",
+		"plugin:@typescript-eslint/eslint-recommended",
+		"plugin:@typescript-eslint/recommended"
+	],
+	"parserOptions": {
+		"ecmaVersion": 2019,
+		"sourceType": "module",
+		"project": ["./tsconfig.json", "./tsconfig.eslint.json"],
+		"tsconfigRootDir": "."
+	},
+	"rules": {
+		"semi": "off",
+		"@typescript-eslint/semi": ["error", "always"],
+		"@typescript-eslint/no-empty-function": ["error", { "allow": ["arrowFunctions"] }],
+		"@typescript-eslint/member-delimiter-style": ["error", { "multiline": { "delimiter": "semi", "requireLast": true }}],
+		"@typescript-eslint/interface-name-prefix": [0],
+		"@typescript-eslint/strict-boolean-expressions": [0],
+		"@typescript-eslint/no-explicit-any": [0], // remove one day, maybe. This is early days so we have some anys.
+		"@typescript-eslint/restrict-plus-operands": [0], // when this rule functions correctly, we can remove it. It
+		"@typescript-eslint/explicit-module-boundary-types": [ 1, { "allowArgumentsExplicitlyTypedAsAny": true } ],
+		// does not pick up the correct type when returning from a JS function
+		"@typescript-eslint/no-inferrable-types": "off",
+		"no-useless-escape": [1],
+		"@typescript-eslint/restrict-template-expressions": [0],
+		"@typescript-eslint/prefer-nullish-coalescing": [0]
+	},
+	"env": {
+		"es6": true,
+		"browser": true,
+		"node": true,
+		"jest": true
+	}
+}
