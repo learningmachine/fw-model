@@ -1,5 +1,6 @@
 *.yml
 *.config.js
+.babelrc
 .nvmrc
 .github/
 .eslintrc.js

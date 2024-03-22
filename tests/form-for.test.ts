@@ -1,4 +1,4 @@
-import { assert } from "chai";
+import { assert } from 'chai';
 
 import {
   formFor,
@@ -7,7 +7,7 @@ import {
   fromClassArray,
   createFrom,
   fromPropertyClass,
-} from "../src/index";
+} from '../src/index';
 
 import * as Validators from '../src/validators';
 
@@ -31,14 +31,18 @@ class ModelF {
 class ModelD {
   hey: string;
   @fromClassArray(ModelC) cs: ModelC[];
-  @fromPropertyClass(ModelF) f: { [key: string]: ModelF };
+  @fromPropertyClass(ModelF) f: {
+    [key: string]: ModelF;
+  };
 }
 
 class ModelE {
   hey: string;
   @fromClassArray(ModelC) cs: ModelC[];
   @fromClass b: ModelB;
-  @fromPropertyClass(ModelF) f: { [key: string]: ModelF };
+  @fromPropertyClass(ModelF) f: {
+    [key: string]: ModelF;
+  };
 }
 
 interface Widget {
@@ -54,88 +58,98 @@ class OneWidget {
 }
 
 class Widget1 implements Widget {
-  type = "widget-1";
+  type = 'widget-1';
   pow: string;
 }
 
 class Widget2 implements Widget {
-  type = "widget-2";
+  type = 'widget-2';
   pow2: string;
   @fromClass b: ModelB;
 }
 
 // Test es5 functions
 const formForModelES5A = formFor(ModelA, s => {
-  s.field(a => { return a.field1; }, "Field 1");
+  s.field(a => {
+    return a.field1;
+  }, 'Field 1');
 });
 const formForModelES5B = formFor(ModelA, s => {
-  s.field(function(a) { return a.field1; }, "Field 1");
+  s.field(function (a) {
+    return a.field1;
+  }, 'Field 1');
 });
 const formForModelES5C = formFor(ModelA, s => {
-  s.field(function(a) { return a.field1;}, "Field 1");
+  s.field(function (a) {
+    return a.field1;
+  }, 'Field 1');
 });
 const formForModelES5D = formFor(ModelA, s => {
-  s.field(function(a) {return a.field1;}, "Field 1");
+  s.field(function (a) {
+    return a.field1;
+  }, 'Field 1');
 });
 
 const formForModelA = formFor(ModelA, s => {
-  s.field(a => a.field1, "Field 1");
+  s.field(a => a.field1, 'Field 1');
 });
 
 const formForModelB = formFor(ModelB, s => {
-  s.field(a => a.field2, "Field 2");
+  s.field(a => a.field2, 'Field 2');
 });
 
 const formForModelC = formFor(ModelC, s => {
-  s.field(a => a.hey, "Hey Now");
-  s.form(a => a.b, "Beee", formForModelB);
+  s.field(a => a.hey, 'Hey Now');
+  s.form(a => a.b, 'Beee', formForModelB);
 });
 
 const formForModelF = formFor(ModelF, s => {
-  s.field(a => a.pow, "Pow");
+  s.field(a => a.pow, 'Pow');
 });
 
 const formForModelD = formFor(ModelD, s => {
-  s.field(a => a.hey, "Hey Now");
-  s.formArray(a => a.cs, "Ceeees", formForModelC);
-  s.formProperty(a => a.f, "Pow", formForModelF);
+  s.field(a => a.hey, 'Hey Now');
+  s.formArray(a => a.cs, 'Ceeees', formForModelC);
+  s.formProperty(a => a.f, 'Pow', formForModelF);
 });
 
 // validation creators
 const formForModelBWithValidation = formFor(ModelB, s => {
-  s.field(a => a.field2, "Field 2", b => b.use(Validators.required));
+  s.field(a => a.field2, 'Field 2', b => b.use(Validators.required));
 });
 
 const formForModelFWithValidation = formFor(ModelF, s => {
-  s.requiredField(a => a.pow, "Pow");
+  s.requiredField(a => a.pow, 'Pow');
 });
 
 const formForModelCWithValidation = formFor(ModelC, s => {
-  s.field(a => a.hey, "Hey Now", b => b.use(Validators.required, Validators.isEmail));
-  s.form(a => a.b, "Beee", formForModelBWithValidation);
+  s.field(a => a.hey, 'Hey Now', b => b.use(Validators.required, Validators.isEmail));
+  s.form(a => a.b, 'Beee', formForModelBWithValidation);
 });
 
 const formForModelEWithValidation = formFor(ModelE, s => {
-  s.field(a => a.hey, "ok", b => b.use(Validators.required));
-  s.form(a => a.b, "Beee", formForModelBWithValidation);
-  s.formArray(a => a.cs, "Ceeees", formForModelCWithValidation);
-  s.formProperty(a => a.f, "Pow", formForModelFWithValidation);
+  s.field(a => a.hey, 'ok', b => b.use(Validators.required));
+  s.form(a => a.b, 'Beee', formForModelBWithValidation);
+  s.formArray(a => a.cs, 'Ceeees', formForModelCWithValidation);
+  s.formProperty(a => a.f, 'Pow', formForModelFWithValidation);
 });
 
 const formForWidget1 = formFor(Widget1, s => {
-  s.requiredField(a => a.pow, "Pow");
+  s.requiredField(a => a.pow, 'Pow');
 });
 
 const formForWidget2 = formFor(Widget2, s => {
-  s.requiredField(a => a.pow2, "Pow");
-  s.form(a => a.b, "b", formForModelBWithValidation);
+  s.requiredField(a => a.pow2, 'Pow');
+  s.form(a => a.b, 'b', formForModelBWithValidation);
 });
 
 const formForWidgets = formFor(Widgets, s => {
-  s.formArray(a => a.widgets, "Widgets", data => {
+  s.formArray(a => a.widgets, 'Widgets', data => {
     switch (data.type) {
-      case "widget-1": return formForWidget1(data as Widget1);
-      case "widget-2": return formForWidget2(data as Widget2);
+      case 'widget-1':
+        return formForWidget1(data as Widget1);
+      case 'widget-2':
+        return formForWidget2(data as Widget2);
     }
 
     return null;
@@ -143,24 +157,26 @@ const formForWidgets = formFor(Widgets, s => {
 });
 
 const formFormOneWidget = formFor(OneWidget, s => {
-  s.form(a => a.widget, "Widget", data => {
+  s.form(a => a.widget, 'Widget', data => {
     switch (data.type) {
-      case "widget-1": return formForWidget1(data as Widget1);
-      case "widget-2": return formForWidget2(data as Widget2);
+      case 'widget-1':
+        return formForWidget1(data as Widget1);
+      case 'widget-2':
+        return formForWidget2(data as Widget2);
     }
 
     return null;
   });
 });
 
-describe("form for", () => {
-  it("creates simple fields", () => {
+describe('form for', () => {
+  it('creates simple fields', () => {
     const instance = formForModelA(null);
 
     assert(instance.field1 == null);
   });
 
-  it("creates simple fields with es5 field functions", () => {
+  it('creates simple fields with es5 field functions', () => {
     const instanceA = formForModelES5A(null);
     assert(instanceA.field1 == null);
 
@@ -168,36 +184,36 @@ describe("form for", () => {
     assert(instanceB.field1 == null);
 
     const instanceC = formForModelES5C(null);
-    assert(instanceB.field1 == null);
+    assert(instanceC.field1 == null);
 
     const instanceD = formForModelES5D(null);
-    assert(instanceB.field1 == null);
+    assert(instanceD.field1 == null);
   });
 
-  it("doesn't modify existing simple fields", () => {
-    const otherData = { field1: "hey" };
+  it('doesn\'t modify existing simple fields', () => {
+    const otherData = { field1: 'hey' };
 
     const instance = formForModelA(otherData);
-    instance.field1 = "now";
+    instance.field1 = 'now';
 
-    assert(otherData.field1 == "hey");
+    assert(otherData.field1 == 'hey');
   });
 
-  it("can create sub forms", () => {
+  it('can create sub forms', () => {
     const instance = formForModelC(null);
 
     assert(instance.hey == null);
-    assert(instance.b instanceof FormAsModel, "not an instance of a form");
+    assert(instance.b instanceof FormAsModel, 'not an instance of a form');
 
-    instance.b.field2 = "hey now";
+    instance.b.field2 = 'hey now';
 
     const updated = instance.updatedModel();
 
     assert(updated.b instanceof ModelB);
-    assert(updated.b.field2 == "hey now");
+    assert(updated.b.field2 == 'hey now');
   });
 
-  it("can handle nulls in updatedModel", () => {
+  it('can handle nulls in updatedModel', () => {
     const instance = formForModelC(null);
 
     instance.b = null;
@@ -207,29 +223,29 @@ describe("form for", () => {
     assert(updated.b == null);
   });
 
-  it("can create sub forms and not modify", () => {
+  it('can create sub forms and not modify', () => {
     const origData = {
-      hey: "hey",
+      hey: 'hey',
       b: {
-        field2: "now",
+        field2: 'now',
       },
     };
 
     const instance = formForModelC(origData);
 
-    instance.hey = "pow";
-    instance.b.field2 = "powpow";
+    instance.hey = 'pow';
+    instance.b.field2 = 'powpow';
 
     const updated = instance.updatedModel();
 
-    assert(origData.hey == "hey");
-    assert(origData.b.field2 == "now");
+    assert(origData.hey == 'hey');
+    assert(origData.b.field2 == 'now');
 
-    assert(updated.hey == "pow");
-    assert(updated.b.field2 == "powpow");
+    assert(updated.hey == 'pow');
+    assert(updated.b.field2 == 'powpow');
   });
 
-  it("can create sub forms from arrays", () => {
+  it('can create sub forms from arrays', () => {
     const instance = formForModelD(null);
 
     assert(instance.hey == null);
@@ -242,112 +258,112 @@ describe("form for", () => {
     assert(updated.cs[0] instanceof ModelC);
   });
 
-  it("can create sub forms from arrays and not modify", () => {
+  it('can create sub forms from arrays and not modify', () => {
     const origData = {
-      hey: "pow",
+      hey: 'pow',
       cs: [
         {
-          hey: "hey1",
+          hey: 'hey1',
           b: {
-            field2: "f1",
+            field2: 'f1',
           },
         },
       ],
       f: {
-        prop1: { pow: "pow1" },
-        prop2: { pow: "pow2" },
+        prop1: { pow: 'pow1' },
+        prop2: { pow: 'pow2' },
       },
     };
 
     const instance = formForModelD(origData);
 
-    instance.cs[0].hey = "modified";
-    instance.cs[0].b.field2 = "modified";
+    instance.cs[0].hey = 'modified';
+    instance.cs[0].b.field2 = 'modified';
 
-    instance.f["prop1"].pow = "modified";
+    instance.f['prop1'].pow = 'modified';
 
     instance.cs.push(formForModelC(null));
 
     const updated = instance.updatedModel();
 
     assert(origData.cs.length == 1);
-    assert(origData.cs[0].hey == "hey1");
-    assert(origData.cs[0].b.field2 == "f1");
+    assert(origData.cs[0].hey == 'hey1');
+    assert(origData.cs[0].b.field2 == 'f1');
 
     assert(updated.cs.length == 2);
-    assert(updated.cs[0].hey == "modified");
-    assert(updated.cs[0].b.field2 == "modified");
+    assert(updated.cs[0].hey == 'modified');
+    assert(updated.cs[0].b.field2 == 'modified');
 
-    assert(origData.f["prop1"].pow == "pow1");
+    assert(origData.f['prop1'].pow == 'pow1');
 
-    assert(updated.f["prop1"].pow == "modified");
+    assert(updated.f['prop1'].pow == 'modified');
   });
 
-  it("can validate everything", () => {
+  it('can validate everything', () => {
     const instance = formForModelEWithValidation(null);
 
     instance.b = formForModelBWithValidation(null);
     instance.cs.push(formForModelCWithValidation(null));
-    instance.f["prop1"] = formForModelFWithValidation(null);
+    instance.f['prop1'] = formForModelFWithValidation(null);
 
     try {
       instance.validate();
-      assert.fail(); // should not ever get here..
-    } catch (err) {}
+      assert.fail(); // should not ever get here
+    } catch (err) { /* empty */ }
 
-    assert(instance.validation["hey"] != "", "hey is valid");
+    assert(instance.validation['hey'] != '', 'hey is valid');
     assert(
-      (instance.b as FormForType<any>).validation["field2"] != "",
-      "b.field2 is valid",
+      (instance.b as FormForType<any>).validation['field2'] != '',
+      'b.field2 is valid',
     );
     assert(
-      (instance.f["prop1"] as FormForType<any>).validation["pow"] != "",
-      "f.prop1.pow is valid",
+      (instance.f['prop1'] as FormForType<any>).validation['pow'] != '',
+      'f.prop1.pow is valid',
     );
 
     const cs = instance.cs as FormForType<any>[];
-    assert(cs[0].validation["hey"] != "", "cs[0].hey is valid");
+    assert(cs[0].validation['hey'] != '', 'cs[0].hey is valid');
     assert(
-      (cs[0].b as FormForType<any>).validation["field2"] != "",
-      "cs[0].b.field2 is valid",
+      (cs[0].b as FormForType<any>).validation['field2'] != '',
+      'cs[0].b.field2 is valid',
     );
   });
 
-  it("can copy over validation when creating from an invalid form", () => {
+  it('can copy over validation when creating from an invalid form', () => {
     const instance = formForModelEWithValidation(null);
 
     instance.b = formForModelBWithValidation(null);
     instance.cs.push(formForModelCWithValidation(null));
-    instance.f["prop1"] = formForModelFWithValidation(null);
+    instance.f['prop1'] = formForModelFWithValidation(null);
 
     try {
       instance.validate();
-    } catch (err) {}
+    } catch (err) { /* empty */ }
 
     const newInstace = formForModelEWithValidation(instance);
 
-    assert(newInstace.validation["hey"] != "", "hey is valid");
+    assert(newInstace.validation['hey'] != '', 'hey is valid');
     assert(
-      (newInstace.b as FormForType<any>).validation["field2"] != "",
-      "b.field2 is valid",
+      (newInstace.b as FormForType<any>).validation['field2'] != '',
+      'b.field2 is valid',
     );
     assert(
-      (newInstace.f["prop1"] as FormForType<any>).validation["pow"] != "",
-      "f.prop1.pow is valid",
+      (newInstace.f['prop1'] as FormForType<any>).validation['pow'] != '',
+      'f.prop1.pow is valid',
     );
 
     const cs = newInstace.cs as FormForType<any>[];
-    assert(cs[0].validation["hey"] != "", "cs[0].hey is valid");
+    assert(cs[0].validation['hey'] != '', 'cs[0].hey is valid');
     assert(
-      (cs[0].b as FormForType<any>).validation["field2"] != "",
-      "cs[0].b.field2 is valid",
+      (cs[0].b as FormForType<any>).validation['field2'] != '',
+      'cs[0].b.field2 is valid',
     );
   });
 
-  it("can validate with nulls", () => {
+  it('can validate with nulls', () => {
     const instance = formForModelEWithValidation(null);
 
-    instance.hey = "ok";
+    instance.hey = 'ok';
 
     // we shouldn't have to validate these
     instance.b = null;
@@ -357,65 +373,65 @@ describe("form for", () => {
     instance.validate();
   });
 
-  it("can apply a new model on top of itself", () => {
+  it('can apply a new model on top of itself', () => {
     const old = createFrom(ModelE, {
-      hey: "old",
-      cs: [{ hey: "old", b: { field2: "old" } }],
+      hey: 'old',
+      cs: [{ hey: 'old', b: { field2: 'old' } }],
       b: {
-        field2: "old",
+        field2: 'old',
       },
       f: {
-        prop1: { pow: "old" },
+        prop1: { pow: 'old' },
       },
     });
 
     const newModel = createFrom(ModelE, {
-      hey: "new",
-      cs: [{ hey: "new", b: { field2: "new" } }],
+      hey: 'new',
+      cs: [{ hey: 'new', b: { field2: 'new' } }],
       b: {
-        field2: "new",
+        field2: 'new',
       },
       f: {
-        prop1: { pow: "new" },
+        prop1: { pow: 'new' },
       },
     });
 
     const instance = formForModelEWithValidation(old);
     instance.applyModel(newModel);
 
-    assert(instance.hey == "new");
+    assert(instance.hey == 'new');
     assert(
       instance.b instanceof FormAsModel,
-      "instance.b not an instance of a form",
+      'instance.b not an instance of a form',
     );
-    assert(instance.b.field2 == "new");
+    assert(instance.b.field2 == 'new');
     assert(
-      instance.f["prop1"] instanceof FormAsModel,
-      "instance.f not an instance of a form",
+      instance.f['prop1'] instanceof FormAsModel,
+      'instance.f not an instance of a form',
     );
-    assert(instance.f["prop1"].pow == "new");
+    assert(instance.f['prop1'].pow == 'new');
     assert(
       instance.cs[0] instanceof FormAsModel,
-      "instance.cs[0] not an instance of a form",
+      'instance.cs[0] not an instance of a form',
     );
-    assert(instance.cs[0].hey == "new");
-    assert(instance.cs[0].b.field2 == "new");
+    assert(instance.cs[0].hey == 'new');
+    assert(instance.cs[0].b.field2 == 'new');
   });
 
-  it("evaluates if in the builder", () => {
+  it('evaluates if in the builder', () => {
     class TestClass {
       pow: string;
       hey: string;
     }
 
     const testClassFormCreator = formFor(TestClass, s => {
-      s.field(a => a.pow, "Pow");
-      s.field(a => a.hey, "Hey", b => b.if(model => model.pow == "1", Validators.required));
+      s.field(a => a.pow, 'Pow');
+      s.field(a => a.hey, 'Hey', b => b.if(model => model.pow == '1', Validators.required));
     });
 
     const g = createFrom(TestClass, {
-      pow: "hey",
-      hey: "",
+      pow: 'hey',
+      hey: '',
     });
 
     const instance = testClassFormCreator(g);
@@ -423,83 +439,83 @@ describe("form for", () => {
     // this should validate, since pow is not "1"
     assert.doesNotThrow(() => instance.validate());
 
-    instance.pow = "1";
+    instance.pow = '1';
 
     assert.throws(() => instance.validate());
 
-    instance.hey = "filled in";
+    instance.hey = 'filled in';
 
     assert.doesNotThrow(() => instance.validate());
   });
 
-  it("evaluates same in the builder", () => {
+  it('evaluates same in the builder', () => {
     class TestClass {
       pow: string;
       hey: string;
     }
 
     const testClassFormCreator = formFor(TestClass, s => {
-      s.field(a => a.pow, "Pow");
-      s.field(a => a.hey, "Hey", b => b.same(model => model.pow));
+      s.field(a => a.pow, 'Pow');
+      s.field(a => a.hey, 'Hey', b => b.same(model => model.pow));
     });
 
     const g = createFrom(TestClass, {
-      pow: "hey",
-      hey: "",
+      pow: 'hey',
+      hey: '',
     });
 
     const instance = testClassFormCreator(g);
 
     assert.throws(() => instance.validate());
-    assert.include(instance.validation["hey"], "Pow");
+    assert.include(instance.validation['hey'], 'Pow');
 
-    instance.hey = "hey";
+    instance.hey = 'hey';
 
     assert.doesNotThrow(() => instance.validate());
   });
 
-  it("evaluates matches in the builder", () => {
+  it('evaluates matches in the builder', () => {
     class TestClass {
       pow: string;
     }
 
     const testClassFormCreator = formFor(TestClass, s => {
-      s.field(a => a.pow, "Pow", b => b.matches(/^hey/, "Should start with 'hey'"));
+      s.field(a => a.pow, 'Pow', b => b.matches(/^hey/, 'Should start with \'hey\''));
     });
 
     const g = createFrom(TestClass, {
-      pow: "now",
+      pow: 'now',
     });
 
     const instance = testClassFormCreator(g);
 
     assert.throws(() => instance.validate());
-    instance.pow = "hey now";
+    instance.pow = 'hey now';
 
     assert.doesNotThrow(() => instance.validate());
   });
 
-  it("can also use builders with the requiredField shortcut", () => {
+  it('can also use builders with the requiredField shortcut', () => {
     class TestClass {
       pow: string;
     }
 
     const testClassFormCreator = formFor(TestClass, s => {
-      s.requiredField(a => a.pow, "Pow", b => b.use(Validators.isEmail));
+      s.requiredField(a => a.pow, 'Pow', b => b.use(Validators.isEmail));
     });
 
     const g = createFrom(TestClass, {
-      pow: "",
+      pow: '',
     });
 
     const instance = testClassFormCreator(g);
 
     assert.throws(() => instance.validate());
-    instance.pow = "hey now";
+    instance.pow = 'hey now';
 
     assert.throws(() => instance.validate());
 
-    instance.pow = "derek@derek.com"
+    instance.pow = 'derek@derek.com';
     assert.doesNotThrow(() => instance.validate());
   });
 
@@ -527,128 +543,128 @@ describe("form for", () => {
   });
   */
 
-  describe("polymorphic arrays", () => {
-    it("can handle different validations for formArrays on polymorphic objects", () => {
+  describe('polymorphic arrays', () => {
+    it('can handle different validations for formArrays on polymorphic objects', () => {
       const widgets = createFrom(Widgets, {
         widgets: [
-          { type: "widget-1", pow: "" },
-          { type: "widget-2", pow2: "", b: { field2: "" } },
+          { type: 'widget-1', pow: '' },
+          { type: 'widget-2', pow2: '', b: { field2: '' } },
         ]
       });
 
       const widgetsForm = formForWidgets(widgets);
 
       assert.throws(() => widgetsForm.validate());
-      (widgetsForm.widgets[0] as Widget1).pow = "hey";
-      (widgetsForm.widgets[1] as Widget2).pow2 = "hey";
-      (widgetsForm.widgets[1] as Widget2).b.field2 = "hey";
+      (widgetsForm.widgets[0] as Widget1).pow = 'hey';
+      (widgetsForm.widgets[1] as Widget2).pow2 = 'hey';
+      (widgetsForm.widgets[1] as Widget2).b.field2 = 'hey';
 
       assert.doesNotThrow(() => widgetsForm.validate());
     });
 
-    it("can handle different validations for formArrays on polymorphic objects with object change", () => {
+    it('can handle different validations for formArrays on polymorphic objects with object change', () => {
       const widgets = createFrom(Widgets, {
         widgets: [
-          { type: "widget-1", pow: "" },
+          { type: 'widget-1', pow: '' },
         ]
       });
 
-      const w2 = formForWidget2({ type: "widget-2", pow2: "", b: { field2: "" } });
+      const w2 = formForWidget2({ type: 'widget-2', pow2: '', b: { field2: '' } });
 
       const widgetsForm = formForWidgets(widgets);
 
       assert.throws(() => widgetsForm.validate());
-      (widgetsForm.widgets[0] as Widget1).pow = "hey";
+      (widgetsForm.widgets[0] as Widget1).pow = 'hey';
       assert.doesNotThrow(() => widgetsForm.validate());
 
       widgetsForm.widgets[0] = w2;
 
       assert.throws(() => widgetsForm.validate());
-      (widgetsForm.widgets[0] as Widget2).pow2 = "hey";
-      (widgetsForm.widgets[0] as Widget2).b.field2 = "hey";
+      (widgetsForm.widgets[0] as Widget2).pow2 = 'hey';
+      (widgetsForm.widgets[0] as Widget2).b.field2 = 'hey';
       assert.doesNotThrow(() => widgetsForm.validate());
     });
   });
 
-  describe("polymorphic arrays", () => {
-    it("can handle different validations for formArrays on polymorphic objects", () => {
+  describe('polymorphic arrays', () => {
+    it('can handle different validations for formArrays on polymorphic objects', () => {
       const widgets = createFrom(Widgets, {
         widgets: [
-          { type: "widget-1", pow: "" },
-          { type: "widget-2", pow2: "", b: { field2: "" } },
+          { type: 'widget-1', pow: '' },
+          { type: 'widget-2', pow2: '', b: { field2: '' } },
         ]
       });
 
       const widgetsForm = formForWidgets(widgets);
 
       assert.throws(() => widgetsForm.validate());
-      (widgetsForm.widgets[0] as Widget1).pow = "hey";
-      (widgetsForm.widgets[1] as Widget2).pow2 = "hey";
-      (widgetsForm.widgets[1] as Widget2).b.field2 = "hey";
+      (widgetsForm.widgets[0] as Widget1).pow = 'hey';
+      (widgetsForm.widgets[1] as Widget2).pow2 = 'hey';
+      (widgetsForm.widgets[1] as Widget2).b.field2 = 'hey';
 
       assert.doesNotThrow(() => widgetsForm.validate());
     });
 
-    it("can handle different validations for formArrays on polymorphic objects with object change", () => {
+    it('can handle different validations for formArrays on polymorphic objects with object change', () => {
       const widgets = createFrom(Widgets, {
         widgets: [
-          { type: "widget-1", pow: "" },
+          { type: 'widget-1', pow: '' },
         ]
       });
 
-      const w2 = formForWidget2({ type: "widget-2", pow2: "", b: { field2: "" } });
+      const w2 = formForWidget2({ type: 'widget-2', pow2: '', b: { field2: '' } });
 
       const widgetsForm = formForWidgets(widgets);
 
       assert.throws(() => widgetsForm.validate());
-      (widgetsForm.widgets[0] as Widget1).pow = "hey";
+      (widgetsForm.widgets[0] as Widget1).pow = 'hey';
       assert.doesNotThrow(() => widgetsForm.validate());
 
       widgetsForm.widgets[0] = w2;
 
       assert.throws(() => widgetsForm.validate());
-      (widgetsForm.widgets[0] as Widget2).pow2 = "hey";
-      (widgetsForm.widgets[0] as Widget2).b.field2 = "hey";
+      (widgetsForm.widgets[0] as Widget2).pow2 = 'hey';
+      (widgetsForm.widgets[0] as Widget2).b.field2 = 'hey';
       assert.doesNotThrow(() => widgetsForm.validate());
     });
 
-    it("can handle different validations for form on polymorphic objects", () => {
+    it('can handle different validations for form on polymorphic objects', () => {
       const widget = createFrom(OneWidget, {
-        widget: { type: "widget-1", pow: "" },
+        widget: { type: 'widget-1', pow: '' },
       });
 
       const widgetForm = formFormOneWidget(widget);
 
       assert.throws(() => widgetForm.validate());
-      (widgetForm.widget as Widget1).pow = "hey";
+      (widgetForm.widget as Widget1).pow = 'hey';
 
       assert.doesNotThrow(() => widgetForm.validate());
     });
 
-    it("can handle different validations for form on polymorphic objects with object change", () => {
+    it('can handle different validations for form on polymorphic objects with object change', () => {
       const widget = createFrom(OneWidget, {
-        widget: { type: "widget-1", pow: "" },
+        widget: { type: 'widget-1', pow: '' },
       });
 
       const widgetForm = formFormOneWidget(widget);
-      const w2 = formForWidget2({ type: "widget-2", pow2: "", b: { field2: "" } });
+      const w2 = formForWidget2({ type: 'widget-2', pow2: '', b: { field2: '' } });
 
       assert.throws(() => widgetForm.validate());
-      (widgetForm.widget as Widget1).pow = "hey";
+      (widgetForm.widget as Widget1).pow = 'hey';
 
       assert.doesNotThrow(() => widgetForm.validate());
 
-      console.log("");
+      console.log('');
       console.log(widgetForm.updatedModel());
 
       widgetForm.widget = w2;
 
       assert.throws(() => widgetForm.validate());
-      (widgetForm.widget as Widget2).pow2 = "hey";
-      (widgetForm.widget as Widget2).b.field2 = "hey";
+      (widgetForm.widget as Widget2).pow2 = 'hey';
+      (widgetForm.widget as Widget2).b.field2 = 'hey';
       assert.doesNotThrow(() => widgetForm.validate());
 
-      console.log("");
+      console.log('');
       console.log(widgetForm.updatedModel());
     });
   });
